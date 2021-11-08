@@ -1,0 +1,34 @@
+h1, body{
+    background-color: rgb(201, 222, 235);
+}
+label {
+    font-weight: bolder;
+}
+::placeholder {
+    color: #808080 !important;
+    opacity: 3;
+}
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: #808080 !important;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:  #808080 !important;
+    opacity:  3;
+ }
+ h1 {
+     text-align: center;
+ }
+ #msg {
+     height: 60px;
+ }
+ #botao{
+    text-align: center;
+    margin-top: 30px;
+ }
+ .tabela{
+     height: 80px;
+ }
+ #grid-artigos tbody {
+    cursor: pointer;
+    height: 80px;
+}

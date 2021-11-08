@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cadastro de artigos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body onload="init()">
+    <h1>CADASTRO DE ARTIGOS</h1>
+
+    <div class="container">
+        <div class="row">
+            <div id="msg" class="col-sm-10 offset-sm-1 ">
+                <!--<div class="alert alert-warning">artigo não encontrado.</div>-->
+            </div>
+        </div>
+
+        <form id="form-artigo">
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <label for="inputTitulo">Titulo</label>
+                    <input type="text" class="form-control" id="inputTitulo" required placeholder="Informe o titulo">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <label for="inputTexto">Texto</label>
+                    <input type="text" class="form-control" id="inputTexto" required placeholder="Digite o texto">
+                </div>
+                <div class="col-sm-1">
+                    <label for="inputId">Id</label>
+                    <input type="text" class="form-control" id="inputId" placeholder="ID">
+                </div>
+            
+           
+                <div class="col-sm-8">
+                    <label for="inputAutor">Autor</label>
+                    <input type="text" class="form-control" id="inputAutor" placeholder="Informe o nome do autor">
+                </div>
+                <div class="col-sm-3">
+                    <label for="inputCategoria">Categoria</label>
+                    <input type="text" class="form-control" id="inputCategoria" required placeholder="Informe a categoria do artigo">
+                </div>
+            </div>
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-sm-12" id="botao">
+                    <input type="button" class="btn btn-success" id="btnInsert" value="Inserir">
+                    <input type="button" class="btn btn-warning" id="btnUpdate" value="Alterar">
+                    <input type="button" class="btn btn-danger" id="btnDelete" value="Excluir">
+                    <input type="button" class="btn btn-secondary" id="btnClear" value="Limpar Form">
+                    
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="grid-artigos" class="table table-striped">
+                    <thead class="tabela">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Titulo</th>
+                            <th scope="col">Autor</th>
+                            <th scope="col">Categoria</th>
+                            <th scope="col">Texto</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody id="table-artigos">
+                        <tr>
+                            <td scope="row">1</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        function exibeArtigos() {
+            // Remove todas as linhas do corpo da tabela
+            $("#table-artigos").html("");
+
+            // Popula a tabela com os registros do banco de dados
+            for (i = 0; i < db.data.length; i++) {
+                let artigo = db.data[i];    
+                $("#table-artigos").append(`<tr><td scope="row">${artigo.id}</td>
+                                                <td>${artigo.titulo}</td>
+                                                <td>${artigo.autor}</td>
+                                                <td>${artigo.categoria}</td>
+                                                <td>${artigo.texto}</td>
+                                            </tr>`);
+            }
+        }
+
+        function init() {
+            // Adiciona funções para tratar os eventos 
+            $("#btnInsert").click(function () {
+                // Verfica se o formulário está preenchido corretamente
+               if (!$('#form-artigo')[0].checkValidity()) {
+                    displayMessage("Preencha o formulário corretamente.");
+                    return;
+                }
+
+                // Obtem os valores dos campos do formulário
+                let campoTitulo = $("#inputTitulo").val();
+                let campoTexto = $("#inputTexto").val();
+                let campoAutor = $("#inputAutor").val();
+                let campoCategoria = $('#inputCategoria').val();
+                let artigo = { titulo: campoTitulo, 
+                    texto: campoTexto, 
+                    autor: campoAutor, 
+                    categoria: campoCategoria };
+
+
+                insertArtigo(artigo);
+
+                // Reexibe os contatos
+                exibeArtigos();
+
+                // Limpa o formulario
+                $("#form-artigo")[0].reset();
+            });
+
+            // Intercepta o click do botão Alterar
+            $("#btnUpdate").click(function () {
+                // Obtem os valores dos campos do formulário
+                let campoId = $("#inputId").val();
+                if (campoId == "") {
+                    displayMessage("Selecione um artigo para ser alterado.");
+                    return;
+                }
+                let campoTitulo = $("#inputTitulo").val();
+                let campoTexto = $("#inputTexto").val();
+                let campoAutor = $("#inputAutor").val();
+                let campoCategoria = $("#inputCategoria").val();
+                let artigo = { titulo: campoTitulo, 
+                    texto: campoTexto, 
+                    autor: campoAutor, 
+                    categoria: campoCategoria};
+
+                updateArtigo(parseInt(campoId), artigo);
+
+                // Reexibe os Artigos
+                exibeArtigos();
+
+                // Limpa o formulario
+                $("#form-artigo")[0].reset();
+            });
+
+            // Intercepta o click do botão Excluir
+            $("#btnDelete").click(function () {
+                let campoId = $("#inputId").val();
+                if (campoId == "") {
+                    displayMessage("Selecione um artigo a ser excluído.");
+                    return;
+                }
+                deleteArtigo(parseInt(campoId));
+
+                // Reexibe os artigo
+                exibeArtigos();
+
+                // Limpa o formulario
+                $("#form-artigo")[0].reset();
+            });
+
+            // Intercepta o click do botão Listar Artigos
+            $("#btnClear").click(function () {
+                $("#form-artigo")[0].reset();
+            });
+
+            // Oculta a mensagem de aviso após alguns segundos
+            $('#msg').bind("DOMSubtreeModified", function () { 
+                window.setTimeout(function () {
+                    $(".alert").fadeTo(500, 0).slideUp(500, function () {
+                        $(this).remove();
+                    });
+                }, 5000);
+            });
+
+            // Preenche o formulário quando o usuario clicar em uma linha da tabela 
+            $("#grid-artico").on("click", "tr", function (e) {
+                let linhaArtigo = this;
+                colunas = linhaArtigo.querySelectorAll("td");
+
+                $("#inputId").val(colunas[0].innerText);
+                $("#inputTitulo").val(colunas[1].innerText);
+                $("#inputTexto").val(colunas[2].innerText);
+                $("#inputAutor").val(colunas[3].innerText);
+                $("#inputCategoria").val(colunas[4].innerText);
+            });
+
+            exibeArtigo();
+        }
+    </script>
+</body>
+
+</html>

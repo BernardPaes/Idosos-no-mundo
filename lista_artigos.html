@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cadastro de Artigo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">    
+</head>
+
+<body onload="ListaArtigos()">
+    <h1>Listagem de Artigo</h1>
+
+    <div class="container">
+        <div class="row">
+            <div id="msg" class="col-sm-10 offset-sm-1 ">
+                <!--<div class="alert alert-warning">Artigo não encontrado.</div>-->
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="msg" class="col-sm-2 offset-sm-10 ">
+                <a href="index.html"><input type="button" class="btn btn-warning" id="btnClear" value="Cadastro"></a>
+            </div>
+        </div>        
+        
+        <form id="form-artigo">            
+            <div class="form-group row">
+                <div class="col-sm-4">
+                    <select name="filtro_cidade" id="filtro_cidade" onchange="ListaArtigos()" class="form-control">
+                        <option value="">Selecione o Autor</option>
+                        <option value="Amanda">Amanda</option>
+                        <option value="Bernard">Bernard</option>
+                        <option value="Caio">Caio</option>
+                        <option value="Gustavo">Gustavo</option>
+                        <option value="Igor Marcos">Igor Marcos</option>
+                    </select>                    
+                </div>
+                <div class="col-sm-8">
+                    <select name="filtro_categoria" id="filtro_categoria" onchange="ListaArtigos()"  class="form-control">
+                        <option value="">Selecione a Categoria</option>
+                        <option value="artigosAcademicos">Artigos</option>
+                        <option value="noticias">Noticias</option>
+                        <option value="tutoriais">Tutoriais</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="grid-artigos" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Titulo</th>
+                            <th scope="col">Texto</th>
+                            <th scope="col">Autor</th>
+                            <th scope="col">Categoria</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-artigos">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // função para listar na tabela os artigos que estão associados aos filtros 
+        function ListaArtigos() {
+            $("#table-artigos").append(`<tr><td scope="row">${artigo.id}</td>
+                                                    <td>${artigo.titulo}</td>
+                                                    <td>${artigo.texto}</td>
+                                                    <td>${artigo.autor}</td>
+                                                    <td>${artigo.categoria}</td>
+                                                </tr>`);
+            
+            // Obtem os dados informados pelo usuário nos filtros
+            let fc = document.getElementById('filtro_autor').value;
+            let fcg = document.getElementById('filtro_categoria').value;
+
+            // limpa a lista de artigos apresentados
+            $("#table-artigos").empty();
+
+            // Popula a tabela com os registros do banco de dados
+            for (let index = 0; index < db.data.length; index++) {
+                const artigo = db.data[index];
+
+                // Verifica se os dados do artigo batem com os filtros
+                if (((artigo.autor == fc) || (fc == '')) &&
+                    ((artigo.categoria == fcg) || (fcg == ''))) {
+                    
+                    // Inclui o artigo na tabela    
+                    $("#table-artigos").append(`<tr><td scope="row">${artigo.id}</td>
+                                                    <td>${artigo.titulo}</td>
+                                                    <td>${artigo.texto}</td>
+                                                    <td>${artigo.autor}</td>
+                                                    <td>${artigo.categoria}</td>
+                                                </tr>`);
+                }
+            }
+
+        }
+    </script>
+
+</body>
+
+</html>
